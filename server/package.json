@@ -1,15 +1,16 @@
 {
-  "name": "server",
+  "name": "web3-chat-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Backend webscoket server for Web3 Chat app",
+  "author": "Ted O'Connor",
+  "license": "MIT",
+  "private": true,
   "main": "index.js",
   "scripts": {
     "start": "nodemon ./index.js"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "nodemon": "^2.0.4",
-    "socket.io": "3.0.4"
+    "socket.io": "^3.1.2"
   }
 }
