@@ -18,7 +18,6 @@ require('@solana/wallet-adapter-react-ui/styles.css');
 function PageContent() {
     const { publicKey } = useWallet();
 
-    console.log("connected", publicKey);
     if(publicKey) {
         return (
             <div>

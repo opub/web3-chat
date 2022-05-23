@@ -4,11 +4,9 @@ import socketIOClient from "socket.io-client";
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 const SOCKET_SERVER_URL = "http://localhost:4000";
 
-const useChat = (roomId) => {
+const useChat = (roomId, publicKey) => {
   const [messages, setMessages] = useState([]);
   const socketRef = useRef();
-
-    console.log("useChat", roomId);
 
   useEffect(() => {
     socketRef.current = socketIOClient(SOCKET_SERVER_URL, {
@@ -18,7 +16,7 @@ const useChat = (roomId) => {
     socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
       const incomingMessage = {
         ...message,
-        ownedByCurrentUser: message.senderId === socketRef.current.id,
+        wasSent: message.sender === publicKey,
       };
       setMessages((messages) => [...messages, incomingMessage]);
     });
@@ -26,12 +24,13 @@ const useChat = (roomId) => {
     return () => {
       socketRef.current.disconnect();
     };
-  }, [roomId]);
+  }, [roomId, publicKey]);
 
   const sendMessage = (messageBody) => {
     socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, {
       body: messageBody,
-      senderId: socketRef.current.id,
+      sender: publicKey,
+      date: Date.now()
     });
   };
 
