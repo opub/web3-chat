@@ -7,3 +7,8 @@ body, input, button, a, textarea {
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
 }
+
+span#wallet { 
+  float: right;
+  padding: 5px;
+}

@@ -8,6 +8,8 @@ const useChat = (roomId) => {
   const [messages, setMessages] = useState([]);
   const socketRef = useRef();
 
+    console.log("useChat", roomId);
+
   useEffect(() => {
     socketRef.current = socketIOClient(SOCKET_SERVER_URL, {
       query: { roomId },

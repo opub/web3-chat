@@ -1,56 +1,63 @@
 import React, { useMemo } from 'react';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
 import Home from "./Home/Home";
 import ChatRoom from "./ChatRoom/ChatRoom";
 
-import { useWallet, WalletProvider } from '@solana/wallet-adapter-react';
-import {
-    PhantomWalletAdapter,
-    // getSolflareWallet,
-    // getSolletWallet,
-    // getSolletExtensionWallet
-} from '@solana/wallet-adapter-wallets';
+import { clusterApiUrl } from '@solana/web3.js';
+import { useWallet, ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
+import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
 import {
     WalletModalProvider,
-    WalletMultiButton
+    WalletMultiButton,
+    WalletDisconnectButton
 } from '@solana/wallet-adapter-react-ui';
 require('@solana/wallet-adapter-react-ui/styles.css');
 
-function WalletNotConnected() {
-    return (
-        <div>
-            <h1>
-                Looks like your Solana wallet is not connnected. Connect a wallet to get started!
-            </h1>
-            <WalletMultiButton />
-        </div>
-    );
+function PageContent() {
+    const { publicKey } = useWallet();
+
+    console.log("connected", publicKey);
+    if(publicKey) {
+        return (
+            <div>
+                <span id="wallet"><WalletDisconnectButton /></span>
+                <BrowserRouter>
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/:roomId" element={<ChatRoom />} />
+                    </Routes>
+                </BrowserRouter>
+            </div>
+            );
+    } else {
+        return (
+            <div>
+                <span id="wallet"><WalletMultiButton /></span>
+                <h1>Connect your Solana wallet to begin.</h1>
+            </div>
+        );
+    }
 }
 
 function App() {
-    const { publicKey } = useWallet();
+    const network = WalletAdapterNetwork.Devnet;
+    const endpoint = useMemo(() => clusterApiUrl(network), [network]);
     const wallets = useMemo(
       () => [
-        new PhantomWalletAdapter(),
-        // getSolflareWallet(),
-        // getSolletWallet({ network }),
-        // getSolletExtensionWallet({ network }),
-      ]
+        new PhantomWalletAdapter()
+      ], []
     );
 
     return (
+    <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets} autoConnect>
             <WalletModalProvider>
-                {!publicKey && <WalletNotConnected />}
-                <Router>
-                    <Routes>
-                        <Route exact path="/" element={Home} />
-                        <Route exact path="/:roomId" element={ChatRoom} />
-                    </Routes>
-                </Router>
+                <PageContent />
             </WalletModalProvider>
         </WalletProvider>
+    </ConnectionProvider>
     );
 }
 

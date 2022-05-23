@@ -1,12 +1,15 @@
 import React from "react";
+import { useParams } from "react-router-dom";
 
 import "./ChatRoom.css";
 import useChat from "../useChat";
 
-const ChatRoom = (props) => {
-  const { roomId } = props.match.params;
+const ChatRoom = () => {
+  const roomId = useParams().roomId;
   const { messages, sendMessage } = useChat(roomId);
   const [newMessage, setNewMessage] = React.useState("");
+
+    console.log("room", roomId);
 
   const handleNewMessageChange = (event) => {
     setNewMessage(event.target.value);
